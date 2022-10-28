@@ -1,0 +1,73 @@
+
+body { 
+  min-height: 100vh;
+  margin:0;
+  padding:0;
+  background-color:#0b2736 !important ;
+}
+
+
+
+.configBtn{
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 800px; ;
+}
+
+
+#temp{
+ color:white;
+
+}
+
+
+
+.centerCamera{
+    display: flex;
+    justify-content: center;
+    flex-direction:column ;
+    align-items: center;
+}
+
+
+
+.camera {
+    width:800px;
+    justify-content: center;
+    align-items: center;
+}
+
+.bgCamera{
+  display: flex;
+
+  background-color: black;
+  width: 800px;
+  height: 800px;
+}
+
+.motorBtn{
+  width:800px
+}
+
+@media only screen and (max-width: 800px) {  
+  .centerCamera{
+    width:90%;
+  }
+}
+
+
+.flex_container{
+  display: flex;
+  flex-direction: row;
+}
+
+.loginDiv{
+  display:flex;
+  flex-direction: column;
+
+  margin:30px;
+
+  align-items: center;
+  justify-content:center;
+
+}
