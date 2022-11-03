@@ -12,10 +12,10 @@ from camera import VideoCamera
 load_dotenv()
 
 mm = MotorMood()
-
 pi_camera = VideoCamera() 
-
 app = Flask(__name__,static_url_path='/static')
+
+
 
 @app.after_request
 def after_request(response):
