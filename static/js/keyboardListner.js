@@ -11,13 +11,13 @@ document.addEventListener('keydown', (event) => {
   // Alert the key name and key code on keydown
   
   if (name === "ArrowRight"){
-    SendMotorSignal('R')
+    app.SendMotorSignal('R','rightBtn')
   }else if (name === "ArrowDown"){
-    SendMotorSignal('NAZ')
+    app.SendMotorSignal('NAZ','downBtn')
   }else if (name === "ArrowLeft"){
-    SendMotorSignal('L')
+    app.SendMotorSignal('L','leftBtn')
   }else if (name === "ArrowUp"){
-    SendMotorSignal('V')
+    app.SendMotorSignal('V','upBtn')
   }
   
   // console.log(name )

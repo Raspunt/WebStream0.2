@@ -1,9 +1,11 @@
 import os
 import time
+import threading
 
 from gpiozero import CPUTemperature
 from flask import Flask, render_template, Response, request,redirect
 from dotenv import load_dotenv
+import cv2 as cv
 
 from motors import MotorMood
 from camera import VideoCamera
@@ -15,6 +17,9 @@ mm = MotorMood()
 pi_camera = VideoCamera() 
 app = Flask(__name__,static_url_path='/static')
 
+pi_camera.start()
+
+os.system("rm -rf VideoFrames/*")
 
 
 @app.after_request
@@ -65,9 +70,15 @@ def motorCommand():
 
 
 def gen(camera):
-    camera.start()
+    # camera.start()
+
+
     while True:
+
+
         frame = camera.get_frame()
+   
+
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
@@ -107,14 +118,27 @@ def LoginUser():
 
 @app.route('/temp')
 def getTemp():
-
     cpu = CPUTemperature()
-
     return Response(str(cpu.temperature), status=200, mimetype='application/json')
 
+
+@app.route('/StartRecord')
+def StartRecord():
+    
+
+    t1 = threading.Thread(target=pi_camera.StartRecordVideo, args=())
+    t1.start()
+
+    t2 = threading.Thread(target=pi_camera.StopRecordVideo, args=())
+    t2.start()
+    
+    return Response("Record is done",status=200)
+
+
+
+    
 
 
 
 if __name__ == '__main__':
-
     app.run(host='0.0.0.0', debug=False)
