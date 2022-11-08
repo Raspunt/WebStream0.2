@@ -93,36 +93,28 @@ let app = createApp({
             data:fd,
             headers: { "Content-Type": "multipart/form-data" },
         })
-      .then(function (response) {
+       .then(function (response) {
             btn.style = "background-color:white;color: black;"
-      })
+       })
       .catch(function (response) {
       
-    });	
+       });	
+    },
+    RecordVideo(){
+        axios({
+            method: "post",
+            url: "/StartRecord",
+            headers: { "Content-Type": "multipart/form-data" },
+        })
+       .then(function (response) {
+
+        })
+      .catch(function (response) {
+      
+       });
     }
     
 },
-created(){
-    setInterval(()=>{
-        if (app.showVideo == true){
-            
-            
-            axios({
-                url: "/temp",
-                headers: { "Content-Type": "multipart/form-data" },
-            })
-            .then(function (response) {
-                // console.log(response.data);
-                let  temp = document.getElementById('temp')
-                temp.innerHTML = 'температура:'+response.data
-                
-            })
-            .catch(function (response) {
-                // console.log(response); 
-            });	
-            
-        }
-    },2000)
-}
+
 
 }).mount('#app')

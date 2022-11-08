@@ -4,10 +4,13 @@ import time
 import os
 
 import cv2 as cv
-from imutils.video.pivideostream import PiVideoStream
+from imutils.video import VideoStream,FPS
 import imutils
 import numpy as np
 import glob
+
+from sshSender import sshSender
+
 
 class VideoCamera(object):
 
@@ -15,7 +18,6 @@ class VideoCamera(object):
     RecordVideo = False
     countOfFrames = 0
 
-    fps = 30
 
     
 
@@ -26,8 +28,12 @@ class VideoCamera(object):
     def start(self,file_type  = ".jpg", photo_string= "stream_photo"):
         
         if self.cameraWorking == False:
-            self.vs = PiVideoStream(resolution=(640, 480), framerate=self.fps).start()
-            # self.vs = PiVideoStream().start()
+            # self.vs = WebcamVideoStream(src=2,resolution=(640, 480), framerate=self.fps).start()
+            self.vs = VideoStream(src=0,framerate=30).start()
+
+            
+
+
             self.file_type = file_type
             self.photo_string = photo_string
             time.sleep(2.0)
@@ -80,11 +86,20 @@ class VideoCamera(object):
 
             if timer == 10:
                 self.RecordVideo = False
+                self.countOfFrames = 0
                 os.system('rm -rf video.mp4')
-                os.system("ffmpeg -framerate 10 -i VideoFrames/img%d.jpg -c:v libx264 -r 30 video.mp4")
-                os.system('rm -rf VideoFrame/*')
-                os.system('mv video.mp4 VideoFrames/')
-                
+                os.system("ffmpeg -framerate 60 -i VideoFrames/img%d.jpg -c:v libx264 -r 30 video.mp4")
+
+                sender = sshSender()
+                lenfiles =  len(sender.ListFilesRemoteDir('/home/serv/share/CameraVideos/')) + 1
+                os.system(f'mv video.mp4 VideoFrames/video{lenfiles}.mp4')
+
+                for filename in os.listdir('VideoFrames/'):
+                    if filename.endswith(".mp4"):
+                        sender.Send(f'VideoFrames/{filename}','/home/serv/share/CameraVideos/')
+
+                os.system('rm -rf VideoFrames/*')
+
 
 
 

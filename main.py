@@ -2,18 +2,12 @@ import os
 import time
 import threading
 
-from gpiozero import CPUTemperature
 from flask import Flask, render_template, Response, request,redirect
-from dotenv import load_dotenv
 import cv2 as cv
 
-from motors import MotorMood
 from camera import VideoCamera
 
 
-load_dotenv()
-
-mm = MotorMood()
 pi_camera = VideoCamera() 
 app = Flask(__name__,static_url_path='/static')
 
@@ -36,32 +30,32 @@ def index():
     return render_template('index.html') 
 
 
-@app.route('/motor_command',methods = ['POST'])
-def motorCommand():
+# @app.route('/motor_command',methods = ['POST'])
+# def motorCommand():
     
-    motorSig = request.form.get('mc')
-    speed = 0.3
+#     motorSig = request.form.get('mc')
+#     speed = 0.3
 
 
-    if motorSig == "V":
-        mm.motorV()
-        time.sleep(speed)
-        mm.motorS()
+#     if motorSig == "V":
+#         mm.motorV()
+#         time.sleep(speed)
+#         mm.motorS()
     
-    elif motorSig == "R":
-        mm.motorR()
-        time.sleep(0.1)
-        mm.motorS()
+#     elif motorSig == "R":
+#         mm.motorR()
+#         time.sleep(0.1)
+#         mm.motorS()
 
-    elif motorSig == "L":
-        mm.motorL()
-        time.sleep(0.1)
-        mm.motorS()
+#     elif motorSig == "L":
+#         mm.motorL()
+#         time.sleep(0.1)
+#         mm.motorS()
 
-    elif motorSig == "NAZ":
-        mm.motorNAZ()
-        time.sleep(speed)
-        mm.motorS()
+#     elif motorSig == "NAZ":
+#         mm.motorNAZ()
+#         time.sleep(speed)
+#         mm.motorS()
 
 
 
@@ -116,13 +110,13 @@ def LoginUser():
 
 
 
-@app.route('/temp')
-def getTemp():
-    cpu = CPUTemperature()
-    return Response(str(cpu.temperature), status=200, mimetype='application/json')
+# @app.route('/temp')
+# def getTemp():
+#     cpu = CPUTemperature()
+#     return Response(str(cpu.temperature), status=200, mimetype='application/json')
 
 
-@app.route('/StartRecord')
+@app.route('/StartRecord',methods = ['POST'])
 def StartRecord():
     
 
@@ -132,7 +126,7 @@ def StartRecord():
     t2 = threading.Thread(target=pi_camera.StopRecordVideo, args=())
     t2.start()
     
-    return Response("Record is done",status=200)
+    return Response("Record start",status=200)
 
 
 
