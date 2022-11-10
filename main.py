@@ -13,6 +13,8 @@ app = Flask(__name__,static_url_path='/static')
 
 pi_camera.start()
 
+MontionDetection = False
+
 os.system("rm -rf VideoFrames/*")
 
 
@@ -30,37 +32,6 @@ def index():
     return render_template('index.html') 
 
 
-# @app.route('/motor_command',methods = ['POST'])
-# def motorCommand():
-    
-#     motorSig = request.form.get('mc')
-#     speed = 0.3
-
-
-#     if motorSig == "V":
-#         mm.motorV()
-#         time.sleep(speed)
-#         mm.motorS()
-    
-#     elif motorSig == "R":
-#         mm.motorR()
-#         time.sleep(0.1)
-#         mm.motorS()
-
-#     elif motorSig == "L":
-#         mm.motorL()
-#         time.sleep(0.1)
-#         mm.motorS()
-
-#     elif motorSig == "NAZ":
-#         mm.motorNAZ()
-#         time.sleep(speed)
-#         mm.motorS()
-
-
-
-
-    return "1"
 
 
 def gen(camera):
@@ -69,10 +40,12 @@ def gen(camera):
 
     while True:
 
+        if MontionDetection == True:
+            frame = camera.FindMontion()
+        else:
+            frame = camera.get_frame()
 
-        frame = camera.get_frame()
    
-
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
@@ -110,26 +83,42 @@ def LoginUser():
 
 
 
-# @app.route('/temp')
-# def getTemp():
-#     cpu = CPUTemperature()
-#     return Response(str(cpu.temperature), status=200, mimetype='application/json')
-
 
 @app.route('/StartRecord',methods = ['POST'])
 def StartRecord():
-    
 
-    t1 = threading.Thread(target=pi_camera.StartRecordVideo, args=())
-    t1.start()
-
-    t2 = threading.Thread(target=pi_camera.StopRecordVideo, args=())
-    t2.start()
     
+    t = threading.Thread(target=pi_camera.StartRecordVideo, args=())
+    t.start()
+
+    t = threading.Thread(target=pi_camera.generate_frames, args=())
+    t.start()
+
+    t = threading.Thread(target=pi_camera.StopRecordVideo, args=())
+    t.start()
+
     return Response("Record start",status=200)
 
 
 
+@app.route('/EnableMontionDetection',methods = ['POST'])
+def EnableMontionDetection():
+
+    global MontionDetection
+    MontionDetection = True
+
+    return Response("Montion detection is turned on",status=200)
+
+
+@app.route('/DisableMontionDetection',methods = ['POST'])
+def DisableMontionDetection():
+
+    global MontionDetection
+    MontionDetection = False
+
+    return  Response("Montion detection is turned off",status=200)
+
+    
     
 
 

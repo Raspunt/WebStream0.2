@@ -103,7 +103,7 @@ let app = createApp({
     RecordVideo(){
         axios({
             method: "post",
-            url: "/StartRecord",
+            url: "/EnableMontionDetection",
             headers: { "Content-Type": "multipart/form-data" },
         })
        .then(function (response) {
@@ -112,6 +112,36 @@ let app = createApp({
       .catch(function (response) {
       
        });
+    },
+    EnableMontionDetection(){
+        
+        axios({
+            method: "post",
+            url: "/EnableMontionDetection",
+            headers: { "Content-Type": "multipart/form-data" },
+        })
+       .then(function (response) {
+
+        })
+      .catch(function (response) {
+      
+       });
+
+    },
+    DisableMontionDetection(){
+        
+        axios({
+            method: "post",
+            url: "/DisableMontionDetection",
+            headers: { "Content-Type": "multipart/form-data" },
+        })
+       .then(function (response) {
+
+        })
+      .catch(function (response) {
+      
+       });
+
     }
     
 },

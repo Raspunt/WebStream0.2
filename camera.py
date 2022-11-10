@@ -16,20 +16,17 @@ class VideoCamera(object):
 
     cameraWorking = False
     RecordVideo = False
+
     countOfFrames = 0
+    MoveDetect = False
 
 
     
-
-
-
-
-
     def start(self,file_type  = ".jpg", photo_string= "stream_photo"):
         
         if self.cameraWorking == False:
             # self.vs = WebcamVideoStream(src=2,resolution=(640, 480), framerate=self.fps).start()
-            self.vs = VideoStream(src=0,framerate=30).start()
+            self.vs = VideoStream(src=0,framerate=30,resolution=(320, 240)).start()
 
             
 
@@ -63,10 +60,22 @@ class VideoCamera(object):
 
 
         ret, jpeg = cv.imencode(self.file_type, frame)
-        self.previous_frame = jpeg
 
         return jpeg.tobytes()
     
+
+    def generate_frames(self):
+
+
+        while self.RecordVideo == True:
+
+            frame = self.vs.read()
+
+            self.countOfFrames += 1
+            cv.imwrite(f'VideoFrames/img{self.countOfFrames}.jpg',frame)
+
+
+
 
     def StartRecordVideo(self):
         self.RecordVideo = True
@@ -74,9 +83,6 @@ class VideoCamera(object):
 
     
    
-
-        
-
 
     def StopRecordVideo(self):
         timer = 0
@@ -101,14 +107,54 @@ class VideoCamera(object):
                 os.system('rm -rf VideoFrames/*')
 
 
+    SaveImage = False
+    def FindMontion(self):
+
+        frame1 = self.vs.read() 
+        frame2 = self.vs.read()
+
+        if self.SaveImage == False:
+            cv.imwrite('frame.jpg',frame2)
+            self.SaveImage = True
+        else:
+            self.SaveImage = False
+        
+        frame2 = cv.imread('frame.jpg')
 
 
+        diff = cv.absdiff(frame1, frame2) 
+
+        diff_gray = cv.cvtColor(diff, cv.COLOR_BGR2GRAY) 
+        blur = cv.GaussianBlur(diff_gray, (5, 5), 0) 
+
+        _, thresh = cv.threshold(blur, 20, 255, cv.THRESH_BINARY) 
+        dilated = cv.dilate(thresh, None, iterations=3) 
+
+        contours, _ = cv.findContours( dilated, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE) 
+
+
+        for contour in contours:
+            (x, y, w, h) = cv.boundingRect(contour)
+            if cv.contourArea(contour) < 900:
+                self.MoveDetect = False
+                continue
+            cv.rectangle(frame1, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            # cv.putText(frame1, "Status: {}".format('Movement'), (10, 20), cv.FONT_HERSHEY_SIMPLEX,
+            #             1, (255, 0, 0), 3)
+            
+            self.MoveDetect = True
+
+        ret, jpeg = cv.imencode(self.file_type, frame1)
+        # cv.imshow("output", frame1)
+
+        if cv.waitKey(1) & 0xFF == ord('q'):
+            cv.waitKey(0) 
+            cv.destroyAllWindows()
+
+
+        return jpeg.tobytes()
 
     
-        
+    def FindMontionTimer():
 
-    # def take_picture(self):
-    #     frame = self.vs.read()
-    #     ret, image = cv.imencode(self.file_type, frame)
-    #     today_date = datetime.now().strftime("%m%d%Y-%H%M%S")
-    #     cv.imwrite(str(self.photo_string + "_" + today_date + self.file_type), frame)
+

@@ -42,7 +42,7 @@ class sshSender():
 
         return files
 
-sender = sshSender()
+# sender = sshSender()
 # sender.Send(sender.init(),'VideoFrames/video.mp4','/home/serv/share/CameraVideos/')
 
-len(sender.ListFilesRemoteDir('/home/serv/share/CameraVideos/'))
+# len(sender.ListFilesRemoteDir('/home/serv/share/CameraVideos/'))
