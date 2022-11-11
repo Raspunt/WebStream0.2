@@ -13,6 +13,9 @@ app = Flask(__name__,static_url_path='/static')
 
 pi_camera.start()
 
+# t = threading.Thread(target=pi_camera.LoopFindMontion, args=())
+# t.start()
+
 MontionDetection = False
 
 os.system("rm -rf VideoFrames/*")

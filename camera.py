@@ -19,6 +19,7 @@ class VideoCamera(object):
 
     countOfFrames = 0
     MoveDetect = False
+    RecordRunning = False
 
 
     
@@ -26,7 +27,7 @@ class VideoCamera(object):
         
         if self.cameraWorking == False:
             # self.vs = WebcamVideoStream(src=2,resolution=(640, 480), framerate=self.fps).start()
-            self.vs = VideoStream(src=0,framerate=30,resolution=(320, 240)).start()
+            self.vs = VideoStream(src=0,framerate=10,resolution=(320, 240)).start()
 
             
 
@@ -93,6 +94,8 @@ class VideoCamera(object):
             if timer == 10:
                 self.RecordVideo = False
                 self.countOfFrames = 0
+
+                
                 os.system('rm -rf video.mp4')
                 os.system("ffmpeg -framerate 60 -i VideoFrames/img%d.jpg -c:v libx264 -r 30 video.mp4")
 
@@ -105,6 +108,7 @@ class VideoCamera(object):
                         sender.Send(f'VideoFrames/{filename}','/home/serv/share/CameraVideos/')
 
                 os.system('rm -rf VideoFrames/*')
+                self.RecordRunning = False
 
 
     SaveImage = False
@@ -132,7 +136,7 @@ class VideoCamera(object):
 
         contours, _ = cv.findContours( dilated, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE) 
 
-
+        
         for contour in contours:
             (x, y, w, h) = cv.boundingRect(contour)
             if cv.contourArea(contour) < 900:
@@ -147,14 +151,26 @@ class VideoCamera(object):
         ret, jpeg = cv.imencode(self.file_type, frame1)
         # cv.imshow("output", frame1)
 
-        if cv.waitKey(1) & 0xFF == ord('q'):
-            cv.waitKey(0) 
-            cv.destroyAllWindows()
+        if self.MoveDetect == True and self.RecordRunning == False:
+            self.RecordRunning = True
+            
+            t = threading.Thread(target=self.StartRecordVideo, args=())
+            t.start()
+
+            t = threading.Thread(target=self.generate_frames, args=())
+            t.start()
+
+            t = threading.Thread(target=self.StopRecordVideo, args=())
+            t.start()
 
 
         return jpeg.tobytes()
 
-    
-    def FindMontionTimer():
+
+    def LoopFindMontion(self):
+
+        while True:
+            self.FindMontion()
+
 
 
