@@ -6,6 +6,7 @@ from flask import Flask, render_template, Response, request,redirect
 import cv2 as cv
 
 from camera import VideoCamera
+from MicRecorder import MicRecorder
 
 
 pi_camera = VideoCamera() 
@@ -121,7 +122,17 @@ def DisableMontionDetection():
 
     return  Response("Montion detection is turned off",status=200)
 
+
+@app.route('/audio')
+def AudioLink():
+    mic = MicRecorder()
+
+    sound = mic.GetAudioStream()
+
+    mic.getAllAudioDevice()
     
+    return Response(sound)
+
     
 
 

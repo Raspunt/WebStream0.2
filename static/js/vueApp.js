@@ -142,7 +142,15 @@ let app = createApp({
       
        });
 
-    }
+    },
+
+
+    playSound () {
+        document.getElementById('AudioStream').play();
+    },
+
+
+    
     
 },
 
