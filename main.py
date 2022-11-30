@@ -12,10 +12,11 @@ from MicRecorder import MicRecorder
 pi_camera = VideoCamera() 
 app = Flask(__name__,static_url_path='/static')
 
-pi_camera.start()
 
 # t = threading.Thread(target=pi_camera.LoopFindMontion, args=())
 # t.start()
+# pi_camera.start()
+
 
 MontionDetection = False
 
@@ -33,13 +34,16 @@ def after_request(response):
 
 @app.route('/')
 def index():
-    return render_template('index.html') 
+
+
+
+    return render_template('index.html',resolution=pi_camera.resolution) 
 
 
 
 
 def gen(camera):
-    # camera.start()
+    camera.start()
 
 
     while True:
@@ -129,12 +133,29 @@ def AudioLink():
 
     sound = mic.GetAudioStream()
 
-    mic.getAllAudioDevice()
+    # mic.getAllAudioDevice()
     
     return Response(sound)
 
-    
 
+@app.route("/config")
+def ConfigPage():
+
+    return render_template('configPage.html')
+
+
+@app.route("/ApplyConfig" ,methods=['POST'])
+def ApplyConfig():
+
+
+    rez = request.form.get('rez')
+
+    pi_camera.setCameraResolution(rez)
+
+    # pi_camera.stop()
+    # pi_camera.start()
+
+    return Response("oh ok...")
 
 
 if __name__ == '__main__':

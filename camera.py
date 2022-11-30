@@ -21,14 +21,16 @@ class VideoCamera(object):
     MoveDetect = False
     RecordRunning = False
 
+    resolution = (1280,720)
 
     
     def start(self,file_type  = ".jpg", photo_string= "stream_photo"):
         
         if self.cameraWorking == False:
+            print("camera start")
             # self.vs = WebcamVideoStream(src=2,resolution=(640, 480), framerate=self.fps).start()
-            self.vs = VideoStream(src=0,framerate=10,resolution=(320, 240)).start()
-
+            self.vs = VideoStream(src=0,framerate=10,resolution=self.resolution).start()
+            
             
 
 
@@ -44,6 +46,7 @@ class VideoCamera(object):
     
     def stop(self):
         self.vs.stop()
+        print("camera stop")
         self.cameraWorking = False 
 
     def __del__(self):
@@ -171,6 +174,20 @@ class VideoCamera(object):
 
         while True:
             self.FindMontion()
+
+
+    def setCameraResolution(self,postData:str):
+
+        self.resolution = postData.split('x')
+
+        self.resolution[0] = int(self.resolution[0])
+        self.resolution[1] = int(self.resolution[1])
+
+        self.resolution = tuple(self.resolution)
+
+        
+        print(self.resolution,type(self.resolution))
+    
 
 
 

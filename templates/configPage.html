@@ -5,10 +5,90 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>configure page</title>
+    <link rel="stylesheet" href="static/configStyle.css">
 </head>
 <body>
 
-    
+    <div class="header">
+
+        <h1 class="TopText">Configure your rasberry pi!</h1>
+        
+    </div>
+        
+
+    <div class="main_container">
+
+
+        <div class="contentBox">
+            
+            <p>
+                Select Your Camera resolution
+            </p>
+
+            <select name="" id="ResolutionBox">
+
+                <option value="rez1">1280x720</option>
+                <option value="rez2">1184x656</option>
+                <option value="rez3">960x720</option>
+                <option value="rez4">800x600</option>
+                <option value="rez5">864x480</option>
+                <option value="rez6">800x448</option>
+                <option value="rez7">752x416</option>
+                <option value="rez8">640x360</option>
+                <option value="rez8">544x288</option>
+                <option value="rez8">352x240</option>
+                <option value="rez9">160x120</option>
+            
+            </select>
+            
+            
+
+
+            
+
+
+            
+        </div>
+        
+        <button onclick="ApplySettings()" class="submitBtn" type="submit">Apply</button>
+    </div>    
+
+
+
+    <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.3/axios.min.js"
+        integrity="sha512-0qU9M9jfqPw6FKkPafM3gy2CBAvUWnYVOfNPDYKVuRTel1PrciTj+a9P3loJB+j0QmN2Y0JYQmkBBS8W+mbezg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script >
+
+
+        function ApplySettings(){
+            
+            let rezSelect = document.getElementById('ResolutionBox')
+            
+            var rezText = rezSelect.options[rezSelect.selectedIndex].text;
+           
+
+
+            let fd = new FormData();
+            fd.append('rez',rezText);
+        
+            axios({
+                method: "post",
+                url: "/ApplyConfig",
+                data:fd,
+                headers: { "Content-Type": "multipart/form-data" },
+            })
+            .then(function (response) {
+
+            })
+            .catch(function (response) {
+            
+        });	
+        }
+
+
+    </script>
     
 </body>
 </html>

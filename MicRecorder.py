@@ -1,5 +1,5 @@
 import pyaudio
-
+import os
 
 class MicRecorder:
 
@@ -12,6 +12,7 @@ class MicRecorder:
 
 
     pa = pyaudio.PyAudio()
+    os.system('clear')
 
     def genHeader(self,sampleRate, bitsPerSample, channels):
         datasize = 2000*10**6
@@ -42,10 +43,11 @@ class MicRecorder:
                         channels=self.CHANNELS,
                         rate=self.RATE,
                         input=True,
-                        input_device_index=1,
                         frames_per_buffer=CHUNK
                         )
-        print("recording...")
+        
+        print("init microfone")
+        
         #frames = []
         first_run = True
         while True:
