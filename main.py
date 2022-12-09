@@ -5,10 +5,12 @@ import threading
 from flask import Flask, render_template, Response, request,redirect
 import cv2 as cv
 
+from motors import MotorMood
 from camera import VideoCamera
-from MicRecorder import MicRecorder
+# from MicRecorder import MicRecorder
 
 
+mm = MotorMood()
 pi_camera = VideoCamera() 
 app = Flask(__name__,static_url_path='/static')
 
@@ -127,15 +129,15 @@ def DisableMontionDetection():
     return  Response("Montion detection is turned off",status=200)
 
 
-@app.route('/audio')
-def AudioLink():
-    mic = MicRecorder()
+# @app.route('/audio')
+# def AudioLink():
+#     mic = MicRecorder()
 
-    sound = mic.GetAudioStream()
+#     sound = mic.GetAudioStream()
 
-    # mic.getAllAudioDevice()
+#     # mic.getAllAudioDevice()
     
-    return Response(sound)
+#     return Response(sound)
 
 
 @app.route("/config")
@@ -156,6 +158,37 @@ def ApplyConfig():
     # pi_camera.start()
 
     return Response("oh ok...")
+
+
+@app.route('/motor_command',methods = ['POST'])
+def motorCommand():
+    
+    motorSig = request.form.get('mc')
+
+
+    if motorSig == "V":
+        mm.motorV()
+        time.sleep(0.3)
+        mm.motorS()
+    
+    elif motorSig == "R":
+        mm.motorR()
+        time.sleep(0.1)
+        mm.motorS()
+
+    elif motorSig == "L":
+        mm.motorL()
+        time.sleep(0.1)
+        mm.motorS()
+
+    elif motorSig == "NAZ":
+        mm.motorNAZ()
+        time.sleep(0.3)
+        mm.motorS()
+
+    return "1"
+
+
 
 
 if __name__ == '__main__':

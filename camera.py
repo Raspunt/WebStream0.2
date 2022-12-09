@@ -5,11 +5,12 @@ import os
 
 import cv2 as cv
 from imutils.video import VideoStream,FPS
+from imutils.video.pivideostream import PiVideoStream
 import imutils
 import numpy as np
 import glob
 
-from sshSender import sshSender
+# from sshSender import sshSender
 
 
 class VideoCamera(object):
@@ -21,7 +22,7 @@ class VideoCamera(object):
     MoveDetect = False
     RecordRunning = False
 
-    resolution = (1280,720)
+    resolution = (320,240)
 
     
     def start(self,file_type  = ".jpg", photo_string= "stream_photo"):
@@ -29,7 +30,7 @@ class VideoCamera(object):
         if self.cameraWorking == False:
             print("camera start")
             # self.vs = WebcamVideoStream(src=2,resolution=(640, 480), framerate=self.fps).start()
-            self.vs = VideoStream(src=0,framerate=10,resolution=self.resolution).start()
+            self.vs = PiVideoStream(framerate=10,resolution=self.resolution).start()
             
             
 
@@ -102,15 +103,15 @@ class VideoCamera(object):
                 os.system('rm -rf video.mp4')
                 os.system("ffmpeg -framerate 60 -i VideoFrames/img%d.jpg -c:v libx264 -r 30 video.mp4")
 
-                sender = sshSender()
-                lenfiles =  len(sender.ListFilesRemoteDir('/home/serv/share/CameraVideos/')) + 1
-                os.system(f'mv video.mp4 VideoFrames/video{lenfiles}.mp4')
+                # sender = sshSender()
+                # lenfiles =  len(sender.ListFilesRemoteDir('/home/serv/share/CameraVideos/')) + 1
+                os.system(f'mv video.mp4 VideoFrames/video.mp4')
 
-                for filename in os.listdir('VideoFrames/'):
-                    if filename.endswith(".mp4"):
-                        sender.Send(f'VideoFrames/{filename}','/home/serv/share/CameraVideos/')
+                # for filename in os.listdir('VideoFrames/'):
+                #     if filename.endswith(".mp4"):
+                        # sender.Send(f'VideoFrames/{filename}','/home/serv/share/CameraVideos/')
 
-                os.system('rm -rf VideoFrames/*')
+                # os.system('rm -rf VideoFrames/*')
                 self.RecordRunning = False
 
 
